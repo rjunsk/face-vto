@@ -40,7 +40,6 @@ export const useRenderer = (
   useEffect(() => {
     const setBackend = async () => {
       const result = await tf.setBackend("wasm");
-      console.log(result);
       if (result) {
         loadCameraSetCanvas();
         requestAF.current = requestAnimationFrame(render);
