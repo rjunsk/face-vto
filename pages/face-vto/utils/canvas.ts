@@ -1,6 +1,5 @@
 import { AnnotatedPrediction } from "@tensorflow-models/facemesh";
 import { TRIANGULATION } from "../constants/triangulations";
-import { drawConnectors } from "@mediapipe/drawing_utils";
 
 export const drawTriangulations = (
   contextRef: CanvasRenderingContext2D,
