@@ -1,5 +1,9 @@
-import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const DynamicFaceMesh = dynamic(() => import("../lib/components/FaceMesh"), {
+  ssr: false,
+});
 
 export default function Home() {
-  return <Link href="/face-vto">Face VTO</Link>;
+  return <DynamicFaceMesh />;
 }
