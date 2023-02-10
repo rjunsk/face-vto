@@ -11,9 +11,11 @@ export default function Home() {
   useRenderer(faceMeshRefs, updatePredictions, loadCameraSetCanvas);
 
   return (
-    <>
-      <video muted ref={faceMeshRefs.videoRef}></video>
-      <canvas ref={faceMeshRefs.canvasRef}></canvas>
-    </>
+    <div className="face-mesh-app">
+      <div className="face-mesh-container">
+        <video muted ref={faceMeshRefs.videoRef}></video>
+        <canvas ref={faceMeshRefs.canvasRef}></canvas>
+      </div>
+    </div>
   );
 }
