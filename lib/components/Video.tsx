@@ -1,4 +1,4 @@
-import { memo } from "React";
+import { memo } from "react";
 import { FaceMeshRefs } from "../types/face-mesh";
 
 const Video = ({ faceMeshRefs }: { faceMeshRefs: FaceMeshRefs }) => (
