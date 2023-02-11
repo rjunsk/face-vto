@@ -1,11 +1,10 @@
 import { useCallback, useEffect } from "react";
 
 import * as tf from "@tensorflow/tfjs";
-import { AnnotatedPrediction } from "@tensorflow-models/facemesh";
-import "@tensorflow/tfjs-backend-wasm";
 import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 
 import { FaceMeshRefs } from "../types/face-mesh";
+import { Face } from "@tensorflow-models/face-landmarks-detection";
 
 setWasmPaths({
   "tfjs-backend-wasm.wasm": "/tfwasm/tfjs-backend-wasm.wasm",
@@ -16,7 +15,7 @@ setWasmPaths({
 
 export const useRenderer = (
   faceMeshRefs: FaceMeshRefs,
-  updatePredictions: (predictions: AnnotatedPrediction[]) => void,
+  updatePredictions: (predictions: Face[]) => void,
   loadCameraSetCanvas: () => void
 ) => {
   const { requestAF, contextRef, canvasRef, modelRef, videoRef } = faceMeshRefs;
@@ -50,5 +49,5 @@ export const useRenderer = (
       }
     };
     setBackend();
-  }, []);
+  }, [render, loadCameraSetCanvas, requestAF]);
 };

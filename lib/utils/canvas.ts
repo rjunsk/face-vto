@@ -1,21 +1,24 @@
+import { Face } from "@tensorflow-models/face-landmarks-detection";
 import { AnnotatedPrediction } from "@tensorflow-models/facemesh";
 import { TRIANGULATION } from "../constants/triangulations";
 
 export const drawTriangulations = (
   contextRef: CanvasRenderingContext2D,
-  positions: [number, number, number][]
+  positions: Face[]
 ) => {
   for (let i = 0; i < TRIANGULATION.length; i += 3) {
     const a = TRIANGULATION[i];
     const b = TRIANGULATION[i + 1];
     const c = TRIANGULATION[i + 2];
 
+    contextRef.shadowColor = "none";
+    contextRef.shadowBlur = 0;
     contextRef.strokeStyle = "orange";
     contextRef.lineWidth = 0.5;
     contextRef.beginPath();
-    contextRef.moveTo(positions[a][0], positions[a][1]);
-    contextRef.lineTo(positions[b][0], positions[b][1]);
-    contextRef.lineTo(positions[c][0], positions[c][1]);
+    contextRef.moveTo(positions[a].x, positions[a].y);
+    contextRef.lineTo(positions[b].x, positions[b].y);
+    contextRef.lineTo(positions[c].x, positions[c].y);
     // contextRef.lineTo(positions[a][0], positions[a][1]);
     contextRef.closePath();
     contextRef.stroke();
@@ -23,13 +26,14 @@ export const drawTriangulations = (
 };
 
 export const drawPositionPoints = (
-  canvasContext: CanvasRenderingContext2D,
-  positions: [number, number, number][]
+  contextRef: CanvasRenderingContext2D,
+  positions: Face[]
 ) => {
   for (let i = 0; i < positions.length; i++) {
-    const x = positions[i][0];
-    const y = positions[i][1];
-    canvasContext.fillRect(x, y, 1, 1);
+    const x = positions[i].x;
+    const y = positions[i].y;
+    contextRef.fillStyle = "black";
+    contextRef.fillRect(x, y, 1, 1);
   }
 };
 
@@ -201,31 +205,32 @@ export const drawRealisticLeftEyeShadow = (
 
 export const smoothEyeShadow = (
   contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
+  predictions: Face[],
+  selectedColors: any
 ) => {
-  const positions = predictions[0].scaledMesh as [number, number, number][];
+  const positions = predictions[0].keypoints;
   const layer1 = [
     33, 246, 161, 160, 159, 158, 157, 173, 133, 243, 190, 223, 46, 124, 226,
     130,
   ];
   contextRef.beginPath();
   let gradient = contextRef.createRadialGradient(
-    positions[30][0] + 5,
-    positions[30][1] + 5,
+    positions[30].x + 5,
+    positions[30].y + 5,
     1,
-    positions[30][0] + 10,
-    positions[30][1] + 50,
+    positions[30].x + 10,
+    positions[30].y + 50,
     100
   );
   // Add three color stops
-  gradient.addColorStop(0, "rgba(58, 31, 74, 0.7)");
+  gradient.addColorStop(0, selectedColors.eye);
   //   gradient.addColorStop(0.2, "rgba(255, 255, 255, 0.3)");
   gradient.addColorStop(0.3, "transparent");
   contextRef.fillStyle = gradient;
 
-  contextRef.moveTo(positions[layer1[0]][0], positions[layer1[0]][1]);
+  contextRef.moveTo(positions[layer1[0]].x, positions[layer1[0]].y);
   for (let i = 1; i < layer1.length; i++) {
-    contextRef.lineTo(positions[layer1[i]][0], positions[layer1[i]][1]);
+    contextRef.lineTo(positions[layer1[i]].x, positions[layer1[i]].y);
   }
   contextRef.closePath();
   //   contextRef.shadowColor = "rgba(58, 31, 74, 0.7)";
@@ -241,21 +246,21 @@ export const smoothEyeShadow = (
   ];
   contextRef.beginPath();
   gradient = contextRef.createRadialGradient(
-    positions[260][0],
-    positions[260][1] + 5,
+    positions[260].x,
+    positions[260].y + 5,
     1,
-    positions[260][0] + 10,
-    positions[260][1] + 50,
+    positions[260].x + 10,
+    positions[260].y + 50,
     100
   );
   // Add three color stops
-  gradient.addColorStop(0, "rgba(58, 31, 74, 0.7)");
+  gradient.addColorStop(0, selectedColors.eye);
   //   gradient.addColorStop(0.2, "rgba(255, 255, 255, 0.3)");
   gradient.addColorStop(0.3, "transparent");
   contextRef.fillStyle = gradient;
-  contextRef.moveTo(positions[layer2[0]][0], positions[layer2[0]][1]);
+  contextRef.moveTo(positions[layer2[0]].x, positions[layer2[0]].y);
   for (let i = 1; i < layer2.length; i++) {
-    contextRef.lineTo(positions[layer2[i]][0], positions[layer2[i]][1]);
+    contextRef.lineTo(positions[layer2[i]].x, positions[layer2[i]].y);
   }
   contextRef.closePath();
   contextRef.fill();
@@ -289,9 +294,10 @@ export const drawEyeLiner = (
 
 export const drawLips = (
   contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
+  predictions: Face[],
+  selectedColors: any
 ) => {
-  const positions = predictions[0].scaledMesh as [number, number, number][];
+  const positions = predictions[0].keypoints;
   const lowerLip = [
     61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 306, 308, 324, 318, 402,
     317, 14, 87, 178, 88, 95, 78, 62, 76,
@@ -304,12 +310,12 @@ export const drawLips = (
   [lowerLip, upperLip].forEach((lip) => {
     const firstPoint = positions[lip[0]];
     contextRef.beginPath();
-    contextRef.moveTo(firstPoint[0], firstPoint[1]);
+    contextRef.moveTo(firstPoint.x, firstPoint.y);
     for (let i = 1; i < lip.length; i++) {
-      contextRef.lineTo(positions[lip[i]][0], positions[lip[i]][1]);
+      contextRef.lineTo(positions[lip[i]].x, positions[lip[i]].y);
     }
     contextRef.closePath();
-    contextRef.fillStyle = "rgba(211, 22, 60, 0.5)";
+    contextRef.fillStyle = selectedColors.lip;
     contextRef.fill();
   });
 };

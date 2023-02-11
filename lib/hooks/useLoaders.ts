@@ -1,17 +1,23 @@
 import { useCallback } from "react";
 
-import * as facemesh from "@tensorflow-models/facemesh";
+import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
 
 import { FaceMeshRefs } from "../types/face-mesh";
 
+const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
+const detectorConfig = {
+  runtime: "tfjs",
+} as faceLandmarksDetection.MediaPipeFaceMeshTfjsModelConfig;
+
 export const useLoaders = (
   faceMeshRefs: FaceMeshRefs,
-  predict: (model: facemesh.FaceMesh) => void
+  predict: (model: faceLandmarksDetection.FaceLandmarksDetector) => void
 ) => {
   const { canvasRef, videoRef, contextRef } = faceMeshRefs;
 
   const loadModel = useCallback(() => {
-    facemesh.load({ maxFaces: 1 }).then(predict);
+    // detector = await faceLandmarksDetection.createDetector(model, detectorConfig);
+    faceLandmarksDetection.createDetector(model, detectorConfig).then(predict);
   }, [predict]);
 
   const handleStreamLoad = useCallback(() => {

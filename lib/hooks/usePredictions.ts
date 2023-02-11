@@ -1,70 +1,64 @@
 import { useCallback, useRef } from "react";
-import { FaceMesh, AnnotatedPrediction } from "@tensorflow-models/facemesh";
 
 import {
-  drawEyeLiner,
-  drawEyeShadows,
-  drawLeftEyeShadow,
   drawLips,
   drawPositionPoints,
-  drawRealisticLeftEyeShadow,
   drawTriangulations,
   smoothEyeShadow,
 } from "../utils/canvas";
 
 import { FaceMeshRefs } from "../types/face-mesh";
+import {
+  Face,
+  FaceLandmarksDetector,
+} from "@tensorflow-models/face-landmarks-detection";
 
-export const usePredictions = (faceMeshRefs: FaceMeshRefs) => {
+export const usePredictions = (
+  faceMeshRefs: FaceMeshRefs,
+  mode = "beauty",
+  selectedColors: any
+) => {
   const { positionsRef, contextRef, modelRef } = faceMeshRefs;
   const printRef = useRef(0);
 
   const updatePredictions = useCallback(
-    (predictions: AnnotatedPrediction[]) => {
+    (predictions: Face[]) => {
       if (printRef.current === 0) {
         console.log(predictions);
         printRef.current = 1;
       }
-      const positions = predictions[0].scaledMesh as unknown as [
-        number,
-        number,
-        number
-      ][];
+      const positions = predictions[0].keypoints;
       positionsRef.current = positions;
 
-      // drawTriangulations(
-      //   contextRef.current as CanvasRenderingContext2D,
-      //   positions
-      // );
-      // drawPositionPoints(
-      //   contextRef.current as CanvasRenderingContext2D,
-      //   positions
-      // );
-      // drawEyeShadows(
-      //   contextRef.current as CanvasRenderingContext2D,
-      //   predictions
-      // );
-      // drawLeftEyeShadow(
-      //   contextRef.current as CanvasRenderingContext2D,
-      //   predictions
-      // );
-      // drawRealisticLeftEyeShadow(
-      //   contextRef.current as CanvasRenderingContext2D,
-      //   predictions
-      // );
-      smoothEyeShadow(
-        contextRef.current as CanvasRenderingContext2D,
-        predictions
-      );
-      drawLips(contextRef.current as CanvasRenderingContext2D, predictions);
-      // drawEyeLiner(contextRef.current as CanvasRenderingContext2D, predictions);
+      if (mode === "mesh") {
+        drawTriangulations(
+          contextRef.current as CanvasRenderingContext2D,
+          positions
+        );
+        drawPositionPoints(
+          contextRef.current as CanvasRenderingContext2D,
+          positions
+        );
+      } else {
+        smoothEyeShadow(
+          contextRef.current as CanvasRenderingContext2D,
+          predictions,
+          selectedColors
+        );
+        drawLips(
+          contextRef.current as CanvasRenderingContext2D,
+          predictions,
+          selectedColors
+        );
+      }
     },
-    [contextRef, positionsRef]
+    [contextRef, positionsRef, mode, selectedColors]
   );
 
   const predict = useCallback(
-    (model: FaceMesh) => {
-      if (model && !modelRef.current) {
-        modelRef.current = model;
+    (detector: FaceLandmarksDetector) => {
+      if (detector && !modelRef.current) {
+        modelRef.current = detector;
       }
     },
     [modelRef]
