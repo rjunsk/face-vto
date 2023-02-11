@@ -1,5 +1,4 @@
 import { MutableRefObject } from "react";
-import { FaceMesh } from "@tensorflow-models/facemesh";
 import {
   FaceLandmarksDetector,
   Keypoint,

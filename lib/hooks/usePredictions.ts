@@ -33,11 +33,11 @@ export const usePredictions = (
       if (mode === "mesh") {
         drawTriangulations(
           contextRef.current as CanvasRenderingContext2D,
-          positions
+          predictions
         );
         drawPositionPoints(
           contextRef.current as CanvasRenderingContext2D,
-          positions
+          predictions
         );
       } else {
         smoothEyeShadow(

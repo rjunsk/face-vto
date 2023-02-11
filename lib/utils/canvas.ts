@@ -1,11 +1,11 @@
 import { Face } from "@tensorflow-models/face-landmarks-detection";
-import { AnnotatedPrediction } from "@tensorflow-models/facemesh";
 import { TRIANGULATION } from "../constants/triangulations";
 
 export const drawTriangulations = (
   contextRef: CanvasRenderingContext2D,
-  positions: Face[]
+  predictions: Face[]
 ) => {
+  const positions = predictions[0].keypoints;
   for (let i = 0; i < TRIANGULATION.length; i += 3) {
     const a = TRIANGULATION[i];
     const b = TRIANGULATION[i + 1];
@@ -27,8 +27,9 @@ export const drawTriangulations = (
 
 export const drawPositionPoints = (
   contextRef: CanvasRenderingContext2D,
-  positions: Face[]
+  predictions: Face[]
 ) => {
+  const positions = predictions[0].keypoints;
   for (let i = 0; i < positions.length; i++) {
     const x = positions[i].x;
     const y = positions[i].y;
@@ -37,171 +38,171 @@ export const drawPositionPoints = (
   }
 };
 
-export const drawEyeShadows = (
-  contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
-) => {
-  if ("annotations" in predictions[0]) {
-    const annotations = predictions[0].annotations || {};
-    const eyeShadowKeys = [
-      // "leftEyeUpper0",
-      // "leftEyeUpper1",
-      "leftEyeUpper2",
-      "leftEyebrowLower",
-      // "rightEyeUpper0",
-      // "rightEyeUpper1",
-      "rightEyeUpper2",
-      "rightEyebrowLower",
-    ];
+// export const drawEyeShadows = (
+//   contextRef: CanvasRenderingContext2D,
+//   predictions: AnnotatedPrediction[]
+// ) => {
+//   if ("annotations" in predictions[0]) {
+//     const annotations = predictions[0].annotations || {};
+//     const eyeShadowKeys = [
+//       // "leftEyeUpper0",
+//       // "leftEyeUpper1",
+//       "leftEyeUpper2",
+//       "leftEyebrowLower",
+//       // "rightEyeUpper0",
+//       // "rightEyeUpper1",
+//       "rightEyeUpper2",
+//       "rightEyebrowLower",
+//     ];
 
-    eyeShadowKeys.forEach((item) => {
-      const positions = annotations[item];
-      contextRef.fillStyle = "rgb(89, 72, 102, 1)";
-      contextRef.beginPath();
-      contextRef.moveTo(positions[0][0], positions[0][1]);
-      for (let i = 1; i < positions.length; i++) {
-        contextRef.lineTo(positions[i][0], positions[i][1]);
-      }
-      contextRef.closePath();
-      contextRef.fill();
-    });
-  }
-};
+//     eyeShadowKeys.forEach((item) => {
+//       const positions = annotations[item];
+//       contextRef.fillStyle = "rgb(89, 72, 102, 1)";
+//       contextRef.beginPath();
+//       contextRef.moveTo(positions[0][0], positions[0][1]);
+//       for (let i = 1; i < positions.length; i++) {
+//         contextRef.lineTo(positions[i][0], positions[i][1]);
+//       }
+//       contextRef.closePath();
+//       contextRef.fill();
+//     });
+//   }
+// };
 
-export const drawLeftEyeShadow = (
-  contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
-) => {
-  const positions = predictions[0].scaledMesh as [number, number, number][];
-  const leftEyeMeshPoints = [
-    33, 246, 161, 160, 159, 158, 157, 173, 133, 243, 190, 56, 28, 27, 29, 30,
-    247, 130,
-  ];
+// export const drawLeftEyeShadow = (
+//   contextRef: CanvasRenderingContext2D,
+//   predictions: AnnotatedPrediction[]
+// ) => {
+//   const positions = predictions[0].scaledMesh as [number, number, number][];
+//   const leftEyeMeshPoints = [
+//     33, 246, 161, 160, 159, 158, 157, 173, 133, 243, 190, 56, 28, 27, 29, 30,
+//     247, 130,
+//   ];
 
-  contextRef.lineJoin = "round";
-  contextRef.beginPath();
+//   contextRef.lineJoin = "round";
+//   contextRef.beginPath();
 
-  let gradient = contextRef.createLinearGradient(
-    positions[46][0],
-    positions[46][1],
-    positions[133][0],
-    positions[133][1]
-  );
-  gradient.addColorStop(0, "rgba(90, 47, 117, 0.7)");
-  gradient.addColorStop(0.5, "rgba(90, 47, 117, 0.7)");
-  gradient.addColorStop(1, "rgba(125, 65, 163, 0.7)");
-  contextRef.fillStyle = gradient;
+//   let gradient = contextRef.createLinearGradient(
+//     positions[46][0],
+//     positions[46][1],
+//     positions[133][0],
+//     positions[133][1]
+//   );
+//   gradient.addColorStop(0, "rgba(90, 47, 117, 0.7)");
+//   gradient.addColorStop(0.5, "rgba(90, 47, 117, 0.7)");
+//   gradient.addColorStop(1, "rgba(125, 65, 163, 0.7)");
+//   contextRef.fillStyle = gradient;
 
-  contextRef.moveTo(
-    positions[leftEyeMeshPoints[0]][0],
-    positions[leftEyeMeshPoints[0]][1]
-  );
-  for (let i = 1; i < leftEyeMeshPoints.length; i++) {
-    contextRef.lineTo(
-      positions[leftEyeMeshPoints[i]][0],
-      positions[leftEyeMeshPoints[i]][1]
-    );
-  }
-  contextRef.closePath();
-  contextRef.fill();
+//   contextRef.moveTo(
+//     positions[leftEyeMeshPoints[0]][0],
+//     positions[leftEyeMeshPoints[0]][1]
+//   );
+//   for (let i = 1; i < leftEyeMeshPoints.length; i++) {
+//     contextRef.lineTo(
+//       positions[leftEyeMeshPoints[i]][0],
+//       positions[leftEyeMeshPoints[i]][1]
+//     );
+//   }
+//   contextRef.closePath();
+//   contextRef.fill();
 
-  gradient = contextRef.createLinearGradient(
-    positions[46][0],
-    positions[46][1],
-    positions[133][0],
-    positions[133][1]
-  );
-  gradient.addColorStop(0, "rgba(160, 99, 199, 0.4)");
-  gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.4)");
-  gradient.addColorStop(1, "rgba(182, 120, 222, 0.4)");
-  contextRef.fillStyle = gradient;
-  const leftEyeMeshPoints1 = [
-    130, 247, 30, 29, 27, 28, 56, 190, 133, 189, 221, 222, 223, 224, 225, 113,
-    130,
-  ];
-  contextRef.beginPath();
-  contextRef.moveTo(
-    positions[leftEyeMeshPoints1[0]][0],
-    positions[leftEyeMeshPoints1[0]][1]
-  );
-  for (let i = 1; i < leftEyeMeshPoints1.length; i++) {
-    contextRef.lineTo(
-      positions[leftEyeMeshPoints1[i]][0],
-      positions[leftEyeMeshPoints1[i]][1]
-    );
-  }
-  contextRef.closePath();
-  contextRef.fill();
+//   gradient = contextRef.createLinearGradient(
+//     positions[46][0],
+//     positions[46][1],
+//     positions[133][0],
+//     positions[133][1]
+//   );
+//   gradient.addColorStop(0, "rgba(160, 99, 199, 0.4)");
+//   gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.4)");
+//   gradient.addColorStop(1, "rgba(182, 120, 222, 0.4)");
+//   contextRef.fillStyle = gradient;
+//   const leftEyeMeshPoints1 = [
+//     130, 247, 30, 29, 27, 28, 56, 190, 133, 189, 221, 222, 223, 224, 225, 113,
+//     130,
+//   ];
+//   contextRef.beginPath();
+//   contextRef.moveTo(
+//     positions[leftEyeMeshPoints1[0]][0],
+//     positions[leftEyeMeshPoints1[0]][1]
+//   );
+//   for (let i = 1; i < leftEyeMeshPoints1.length; i++) {
+//     contextRef.lineTo(
+//       positions[leftEyeMeshPoints1[i]][0],
+//       positions[leftEyeMeshPoints1[i]][1]
+//     );
+//   }
+//   contextRef.closePath();
+//   contextRef.fill();
 
-  gradient.addColorStop(0, "rgba(160, 99, 199, 0.8)");
-  gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.4)");
-  gradient.addColorStop(1, "rgba(251, 247, 252, 0.2)");
-  contextRef.fillStyle = gradient;
-  const leftEyeMeshPoints2 = [223, 46, 124, 130];
-  contextRef.beginPath();
-  contextRef.moveTo(
-    positions[leftEyeMeshPoints2[0]][0],
-    positions[leftEyeMeshPoints2[0]][1]
-  );
-  for (let i = 1; i < leftEyeMeshPoints2.length; i++) {
-    contextRef.lineTo(
-      positions[leftEyeMeshPoints2[i]][0],
-      positions[leftEyeMeshPoints2[i]][1]
-    );
-  }
-  contextRef.closePath();
-  contextRef.fill();
-};
+//   gradient.addColorStop(0, "rgba(160, 99, 199, 0.8)");
+//   gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.4)");
+//   gradient.addColorStop(1, "rgba(251, 247, 252, 0.2)");
+//   contextRef.fillStyle = gradient;
+//   const leftEyeMeshPoints2 = [223, 46, 124, 130];
+//   contextRef.beginPath();
+//   contextRef.moveTo(
+//     positions[leftEyeMeshPoints2[0]][0],
+//     positions[leftEyeMeshPoints2[0]][1]
+//   );
+//   for (let i = 1; i < leftEyeMeshPoints2.length; i++) {
+//     contextRef.lineTo(
+//       positions[leftEyeMeshPoints2[i]][0],
+//       positions[leftEyeMeshPoints2[i]][1]
+//     );
+//   }
+//   contextRef.closePath();
+//   contextRef.fill();
+// };
 
-export const drawRealisticLeftEyeShadow = (
-  contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
-) => {
-  const positions = predictions[0].scaledMesh as [number, number, number][];
-  const layer1 = [113, 225, 29, 159, 160, 161, 246];
-  const layer2 = [
-    246, 33, 113, 124, 46, 223, 222, 221, 189, 243, 133, 173, 157, 158, 159, 29,
-    30, 247,
-  ];
+// export const drawRealisticLeftEyeShadow = (
+//   contextRef: CanvasRenderingContext2D,
+//   predictions: AnnotatedPrediction[]
+// ) => {
+//   const positions = predictions[0].scaledMesh as [number, number, number][];
+//   const layer1 = [113, 225, 29, 159, 160, 161, 246];
+//   const layer2 = [
+//     246, 33, 113, 124, 46, 223, 222, 221, 189, 243, 133, 173, 157, 158, 159, 29,
+//     30, 247,
+//   ];
 
-  let gradient = contextRef.createLinearGradient(
-    positions[246][0],
-    positions[246][1],
-    positions[113][0],
-    positions[113][1]
-  );
-  gradient.addColorStop(0, "rgba(90, 47, 117, 0.9)");
-  gradient.addColorStop(0.2, "rgba(90, 47, 117, 0.8)");
-  gradient.addColorStop(1, "rgba(125, 65, 163, 0.7)");
-  contextRef.fillStyle = gradient;
-  contextRef.lineJoin = "round";
-  // Layer 1
-  contextRef.beginPath();
-  contextRef.moveTo(positions[layer1[0]][0], positions[layer1[0]][1]);
-  for (let i = 1; i < layer1.length; i++) {
-    contextRef.lineTo(positions[layer1[i]][0], positions[layer1[i]][1]);
-  }
-  contextRef.closePath();
-  contextRef.fill();
-  // Layer 2
-  gradient = contextRef.createLinearGradient(
-    positions[145][0],
-    positions[145][1],
-    positions[52][0],
-    positions[52][1]
-  );
-  gradient.addColorStop(0, "rgba(160, 99, 199, 0.5)");
-  gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.5)");
-  gradient.addColorStop(1, "rgba(251, 247, 252, 0.1)");
-  contextRef.fillStyle = gradient;
-  contextRef.beginPath();
-  contextRef.moveTo(positions[layer2[0]][0], positions[layer2[0]][1]);
-  for (let i = 1; i < layer2.length; i++) {
-    contextRef.lineTo(positions[layer2[i]][0], positions[layer2[i]][1]);
-  }
-  contextRef.closePath();
-  contextRef.fill();
-};
+//   let gradient = contextRef.createLinearGradient(
+//     positions[246][0],
+//     positions[246][1],
+//     positions[113][0],
+//     positions[113][1]
+//   );
+//   gradient.addColorStop(0, "rgba(90, 47, 117, 0.9)");
+//   gradient.addColorStop(0.2, "rgba(90, 47, 117, 0.8)");
+//   gradient.addColorStop(1, "rgba(125, 65, 163, 0.7)");
+//   contextRef.fillStyle = gradient;
+//   contextRef.lineJoin = "round";
+//   // Layer 1
+//   contextRef.beginPath();
+//   contextRef.moveTo(positions[layer1[0]][0], positions[layer1[0]][1]);
+//   for (let i = 1; i < layer1.length; i++) {
+//     contextRef.lineTo(positions[layer1[i]][0], positions[layer1[i]][1]);
+//   }
+//   contextRef.closePath();
+//   contextRef.fill();
+//   // Layer 2
+//   gradient = contextRef.createLinearGradient(
+//     positions[145][0],
+//     positions[145][1],
+//     positions[52][0],
+//     positions[52][1]
+//   );
+//   gradient.addColorStop(0, "rgba(160, 99, 199, 0.5)");
+//   gradient.addColorStop(0.5, "rgba(160, 99, 199, 0.5)");
+//   gradient.addColorStop(1, "rgba(251, 247, 252, 0.1)");
+//   contextRef.fillStyle = gradient;
+//   contextRef.beginPath();
+//   contextRef.moveTo(positions[layer2[0]][0], positions[layer2[0]][1]);
+//   for (let i = 1; i < layer2.length; i++) {
+//     contextRef.lineTo(positions[layer2[i]][0], positions[layer2[i]][1]);
+//   }
+//   contextRef.closePath();
+//   contextRef.fill();
+// };
 
 export const smoothEyeShadow = (
   contextRef: CanvasRenderingContext2D,
@@ -266,31 +267,31 @@ export const smoothEyeShadow = (
   contextRef.fill();
 };
 
-export const drawEyeLiner = (
-  contextRef: CanvasRenderingContext2D,
-  predictions: AnnotatedPrediction[]
-) => {
-  const positions = predictions[0].scaledMesh as [number, number, number][];
-  const rightEye = [
-    130, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163,
-    7,
-  ];
-  const leftEye = [
-    359, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390,
-    249,
-  ];
+// export const drawEyeLiner = (
+//   contextRef: CanvasRenderingContext2D,
+//   predictions: AnnotatedPrediction[]
+// ) => {
+//   const positions = predictions[0].scaledMesh as [number, number, number][];
+//   const rightEye = [
+//     130, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163,
+//     7,
+//   ];
+//   const leftEye = [
+//     359, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390,
+//     249,
+//   ];
 
-  [rightEye, leftEye].forEach((eye) => {
-    const firstPoint = positions[eye[0]];
-    contextRef.beginPath();
-    contextRef.moveTo(firstPoint[0], firstPoint[1]);
-    for (let i = 1; i < eye.length; i++) {
-      contextRef.lineTo(positions[eye[i]][0], positions[eye[i]][1]);
-    }
-    contextRef.closePath();
-    contextRef.stroke();
-  });
-};
+//   [rightEye, leftEye].forEach((eye) => {
+//     const firstPoint = positions[eye[0]];
+//     contextRef.beginPath();
+//     contextRef.moveTo(firstPoint[0], firstPoint[1]);
+//     for (let i = 1; i < eye.length; i++) {
+//       contextRef.lineTo(positions[eye[i]][0], positions[eye[i]][1]);
+//     }
+//     contextRef.closePath();
+//     contextRef.stroke();
+//   });
+// };
 
 export const drawLips = (
   contextRef: CanvasRenderingContext2D,
