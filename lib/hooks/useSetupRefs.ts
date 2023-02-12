@@ -7,7 +7,6 @@ export const useSetupRefs = (): FaceMeshRefs => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const modelRef = useRef(null);
-  const positionsRef = useRef([]);
   const requestAF = useRef(null);
 
   return {
@@ -15,7 +14,6 @@ export const useSetupRefs = (): FaceMeshRefs => {
     canvasRef,
     contextRef,
     modelRef,
-    positionsRef,
     requestAF,
   };
 };

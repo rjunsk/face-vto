@@ -13,22 +13,16 @@ import {
   FaceLandmarksDetector,
 } from "@tensorflow-models/face-landmarks-detection";
 
-export const usePredictions = (
-  faceMeshRefs: FaceMeshRefs,
-  mode = "beauty",
-  selectedColors: any
-) => {
-  const { positionsRef, contextRef, modelRef } = faceMeshRefs;
+export const usePredictions = (faceMeshRefs: FaceMeshRefs) => {
+  const { contextRef, modelRef, videoRef } = faceMeshRefs;
   const printRef = useRef(0);
 
   const updatePredictions = useCallback(
-    (predictions: Face[]) => {
+    (predictions: Face[], mode: string, selectedColors: any) => {
       if (printRef.current === 0) {
         console.log(predictions);
         printRef.current = 1;
       }
-      const positions = predictions[0].keypoints;
-      positionsRef.current = positions;
 
       if (mode === "mesh") {
         drawTriangulations(
@@ -39,7 +33,7 @@ export const usePredictions = (
           contextRef.current as CanvasRenderingContext2D,
           predictions
         );
-      } else {
+      } else if (mode === "beauty") {
         smoothEyeShadow(
           contextRef.current as CanvasRenderingContext2D,
           predictions,
@@ -52,7 +46,7 @@ export const usePredictions = (
         );
       }
     },
-    [contextRef, positionsRef, mode, selectedColors]
+    [contextRef]
   );
 
   const predict = useCallback(
